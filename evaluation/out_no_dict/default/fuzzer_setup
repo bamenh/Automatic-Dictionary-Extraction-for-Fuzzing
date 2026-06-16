@@ -1,0 +1,6 @@
+# environment variables:
+AFL_CUSTOM_INFO_PROGRAM=./target/test_bin_fuzz
+AFL_CUSTOM_INFO_PROGRAM_ARGV=
+AFL_CUSTOM_INFO_OUT=evaluation/out_no_dict/default
+# command line:
+'afl-fuzz' '-i' 'evaluation/in' '-o' 'evaluation/out_no_dict' '--' './target/test_bin_fuzz'
