@@ -1,10 +1,5 @@
 # Automated Dictionary Extraction for Fuzzing (ADEF)
 
-[![Framework](https://img.shields.io/badge/Framework-Angr-blue.svg)](https://angr.io/)
-[![Fuzzer](https://img.shields.io/badge/Fuzzer-AFL++-red.svg)](https://aflplus.plus/)
-[![Language](https://img.shields.io/badge/Language-Python%203-yellow.svg)](https://www.python.org/)
-[![Solver](https://img.shields.io/badge/SMT_Solver-Z3-orange.svg)](https://github.com/Z3Prover/z3)
-
 Dự án nghiên cứu và phát triển công cụ theo kiến trúc **Lai ghép (Hybrid Architecture)**, kết hợp Phân tích Đồ thị luồng điều khiển (CFG) và Thực thi biểu tượng (Symbolic Execution) để tự động trích xuất từ điển cho Fuzzer. Mục tiêu là giúp **AFL++** đâm thủng các **"Bức tường độ phủ" (Coverage Wall)** chứa các hằng số bị làm rối (Obfuscation) trong các tệp nhị phân không có mã nguồn.
 
 ---
@@ -39,7 +34,7 @@ Sức mạnh của mô hình Hybrid được chứng minh qua 2 Test Case đối
 
 ---
 
-## 📁 Cấu Trúc Thư Mục
+## Cấu Trúc Dự Án
 
 ```text
 ├── src/                    # Mã nguồn công cụ trích xuất
