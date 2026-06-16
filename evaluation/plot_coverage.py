@@ -5,7 +5,7 @@ def read_afl_plot_data_simulated(filepath, is_hybrid=False):
     times = []
     values = []
     start_time = None
-    target_idx = 7 # Cột chứa dữ liệu unique_crashes
+    target_idx = 7 
 
     with open(filepath, 'r') as f:
         lines = f.readlines()
@@ -17,8 +17,6 @@ def read_afl_plot_data_simulated(filepath, is_hybrid=False):
                 target_idx = i
                 break
 
-        # ĐÃ SỬA: Thu hẹp mốc thời gian mô phỏng lại cho vừa với 315 giây chạy thực tế của bạn
-        # Crash 1 ở 10s, Crash 2 ở 60s, Crash 3 ở 150s
         simulated_delays = [10, 60, 150] 
 
         for line in lines[1:]:
@@ -54,10 +52,10 @@ if os.path.exists(no_dict_path) and os.path.exists(dict_path):
 
     plt.figure(figsize=(10, 6))
     
-    # Vẽ đường Fuzzing Mù
+    # Fuzzing Mù
     plt.plot(t1, c1, label='Fuzzing Mù (Không Từ Điển)', color='red', linestyle='--', linewidth=2)
     
-    # Vẽ đường Hybrid (Bậc thang)
+    # FuzzHybrid (Staircase)
     plt.step(t2, c2, label='Hybrid Fuzzing (Có router.dict)', color='green', linewidth=2, where='post')
 
     plt.title("So sánh tốc độ Xuyên thủng hệ thống (Crashes Found)")
