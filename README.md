@@ -50,3 +50,65 @@ Sức mạnh của mô hình Hybrid được chứng minh qua 2 Test Case đối
 │   ├── out_with_dict/      # Log kết quả Hybrid Fuzzing
 │   └── plot_coverage.py    # Script Python (Matplotlib) vẽ biểu đồ bậc thang
 └── README.md               # Tài liệu dự án
+```
+
+
+## QuickStart
+### 1. Chuẩn bị môi trường (Environment Setup)
+Yêu cầu hệ thống Linux đã cài đặt sẵn **AFL++** và **Python 3**.
+
+```bash
+# Clone kho lưu trữ về máy
+git clone [https://github.com/bamenh/Automatic-Dictionary-Extraction-for-Fuzzing.git](https://github.com/bamenh/Automatic-Dictionary-Extraction-for-Fuzzing.git)
+cd Automatic-Dictionary-Extraction-for-Fuzzing
+
+# Tạo và kích hoạt môi trường ảo Python chuyên biệt để cô lập Angr
+python3 -m venv angr_env
+source angr_env/bin/activate
+
+# Cài đặt các thư viện phân tích và vẽ biểu đồ
+pip install angr matplotlib
+```
+
+### 2. Biên dịch tệp mục tiêu (Build Targets)
+Cần biên dịch mã nguồn C (`test_target.c`) thành 2 phiên bản độc lập:
+
+```bash
+# 1. Biên dịch bản Stripped cho Angr phân tích tĩnh (Không có mã theo dõi)
+gcc target/test_target.c -o target/test_bin
+
+# 2. Biên dịch bản Instrumented cho AFL++ càn quét (Theo dõi độ phủ)
+afl-clang-fast target/test_target.c -o target/test_bin_fuzz
+```
+
+### 3. Khởi chạy ADEF: Trích xuất từ điển (Dictionary Extraction)
+Chạy kịch bản phân tích tĩnh và thực thi biểu tượng. Hệ thống Z3 Solver sẽ tự động giải mã các kỹ thuật Obfuscation (Block Casting, XOR, Checksum, Phương trình tuyến tính) để tìm ra các chuỗi "Magic Bytes".
+
+```bash
+python3 src/adef_extractor.py
+```
+> **Output:** Các chuỗi thu được sẽ được tự động làm sạch, định dạng chuẩn cú pháp và lưu tại `output/router.dict`.
+
+### 4. Tiến hành Kiểm thử (Fuzzing với AFL++)
+Trước khi tiến hành càn quét, cần thiết lập hệ điều hành Linux để tối ưu hóa hiệu năng cho Fuzzer.
+
+```bash
+# Bàn giao quyền xử lý Core Dump và khóa xung nhịp CPU cho AFL++
+echo core | sudo tee /proc/sys/kernel/core_pattern
+echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+# Khởi tạo thư mục và file seed rác ban đầu
+mkdir -p evaluation/in evaluation/out_with_dict
+echo "test" > evaluation/in/seed.txt
+
+# Khởi chạy AFL++ kết hợp nạp từ điển tự sinh qua cờ `-x` (Hybrid Fuzzing)
+afl-fuzz -i evaluation/in -o evaluation/out_with_dict -x output/router.dict -- ./target/test_bin_fuzz
+```
+
+### 5. Xuất biểu đồ Đánh giá (Visualization)
+Sau khi quá trình kiểm thử hoàn tất và ghi nhận các luồng Crash, sử dụng script Python để trực quan hóa tệp log `plot_data` của AFL++.
+
+```bash
+python3 evaluation/plot_coverage.py
+```
+> **Output:** Hệ thống sẽ tự động vẽ và lưu biểu đồ hình bậc thang so sánh hiệu năng (Speedup) tại `evaluation/crash_comparison_staircase.png`.
